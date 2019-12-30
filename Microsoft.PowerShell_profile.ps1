@@ -12,6 +12,10 @@ function doList { dir | foreach { $_.name } }
 function doListDirectories { dir | ? {$_.PSIsContainer} | foreach { $_.name } }
 function doListHidden { dir -Force | foreach { $_.name } }
 
+function doFormatList { echo ""; dir | foreach { Write-Host "  " -NoNewLine; $_.name }; echo "" }
+function doFormatListDirectories { echo ""; dir | ? {$_.PSIsContainer} | foreach { Write-Host "  " -NoNewLine; $_.name }; echo "" }
+function doFormatListHidden { echo ""; dir -Force | foreach { Write-Host "  " -NoNewLine; $_.name }; echo "" }
+
 # ALIASES navigation
 Set-Alias home goToHome
 Set-Alias docs goToDocs 
@@ -31,6 +35,10 @@ Set-Alias dira doShowHidden
 Set-Alias ldir  doList
 Set-Alias ldird doListDirectories
 Set-Alias ldira doListHidden
+
+Set-Alias fldir doFormatList
+Set-Alias fldird doFormatListDirectories
+Set-Alias fldira doFormatListHidden
 
 # commands to run
 docs
