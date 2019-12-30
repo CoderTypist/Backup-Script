@@ -5,8 +5,12 @@ function goToDrive { cd "C:\Users\$env:UserName\Google Drive" }
 function goToAdmin { cd "C:\WINDOWS\system32" }
 
 # FUNCTIONS ease
-function doListDirectories { dir | ? {$_.PSIsContainer} }
-function doListHidden { dir -Force }
+function doShowDirectories { dir | ? {$_.PSIsContainer} }
+function doShowHidden { dir -Force }
+
+function doList { dir | foreach { $_.name } }
+function doListDirectories { dir | ? {$_.PSIsContainer} | foreach { $_.name } }
+function doListHidden { dir -Force | foreach { $_.name } }
 
 # ALIASES navigation
 Set-Alias home goToHome
@@ -21,8 +25,12 @@ Set-Alias npp "C:\Program Files\Notepad++\notepad++.exe"
 Set-Alias psi PowerShell_ise.exe
 
 # ALIASES ease
-Set-Alias dird doListDirectories
-Set-Alias dira doListHidden
+Set-Alias dird doShowDirectories
+Set-Alias dira doShowHidden
+
+Set-Alias ldir  doList
+Set-Alias ldird doListDirectories
+Set-Alias ldira doListHidden
 
 # commands to run
 docs
