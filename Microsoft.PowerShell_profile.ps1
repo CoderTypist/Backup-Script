@@ -12,16 +12,16 @@ function goToAdmin { cd $admin }
 function goToProfile { cd $prof }
 
 # FUNCTIONS ease
-function doShowDirectories { dir | ? {$_.PSIsContainer} }
+function doShowDirectories { dir | ? { $_.PSIsContainer } }
 function doShowHidden { dir -Force }
 
-function doList { dir | foreach { $_.name } }
-function doListDirectories { dir | ? {$_.PSIsContainer} | foreach { $_.name } }
-function doListHidden { dir -Force | foreach { $_.name } }
+function doList { dir | % { $_.name } }
+function doListDirectories { dir | ? { $_.PSIsContainer } | % { $_.name } }
+function doListHidden { dir -Force | % { $_.name } }
 
-function doFormatList { echo ""; dir | foreach { Write-Host "  " -NoNewLine; $_.name }; echo "" }
-function doFormatListDirectories { echo ""; dir | ? {$_.PSIsContainer} | foreach { Write-Host "  " -NoNewLine; $_.name }; echo "" }
-function doFormatListHidden { echo ""; dir -Force | foreach { Write-Host "  " -NoNewLine; $_.name }; echo "" }
+function doFormatList { echo ""; dir | % { Write-Host "  " -NoNewLine; $_.name }; echo "" }
+function doFormatListDirectories { echo ""; dir | ? { $_.PSIsContainer } | % { Write-Host "  " -NoNewLine; $_.name }; echo "" }
+function doFormatListHidden { echo ""; dir -Force | % { Write-Host "  " -NoNewLine; $_.name }; echo "" }
 
 function doColumns ([int]$numCols) { 
     if ( !$numCols ){ dir | Format-Wide }
@@ -29,12 +29,12 @@ function doColumns ([int]$numCols) {
 }
 
 function doColumnsDirectories ([int]$numCols) { 
-    if ( !$numCols ){ dir | ? {$_.PSIsContainer} | Format-Wide }
-    else { dir | ? {$_.PSIsContainer} | Format-Wide -Column $numCols }
+    if ( !$numCols ) { dir | ? { $_.PSIsContainer } | Format-Wide }
+    else { dir | ? { $_.PSIsContainer } | Format-Wide -Column $numCols }
 }
 
 function doColumnsHidden ([int]$numCols) { 
-    if ( !$numCols ){ dir -Force | Format-Wide }
+    if ( !$numCols ) { dir -Force | Format-Wide }
     else { dir -Force | Format-Wide -Column $numCols }
 }
 
@@ -43,7 +43,7 @@ Set-Alias home goToHome
 Set-Alias docs goToDocs 
 Set-Alias drive goToDrive
 Set-Alias admin goToAdmin
-Set-Alias prof goToProf
+Set-Alias prof goToProfile
 
 # ALIASES editors
 Set-Alias vs code.cmd         #Visual Studio Code
