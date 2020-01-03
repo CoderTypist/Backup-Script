@@ -2,19 +2,17 @@
 # imports
 . .\class_Backup.ps1
 
+# usage information
 function usage {
 
-    echo ""
-    echo "Creates backup"
-    echo ".\backup <backup_type>"
-    echo ""
+    echo "`nCreates backup"
+    echo ".\backup <backup_option>`n"
 
-    echo ""
-    echo "Lists types of backups"
-    echo ".\backup list"
-    echo ""
+    echo "`nLists backup options"
+    echo ".\backup list`n"
 }
 
+# lists all backup options
 function listBackups {
     
     echo ""
@@ -24,10 +22,11 @@ function listBackups {
     exit
 }
 
+# maximum number of backups
 $num_Backups = 3
-[Backup[]]$all_Backups = @()
 
-$backup_Documents = $null
+# list of all backup options
+[Backup[]]$all_Backups = @()
 
 # BACKUP Documents
 $backup_Documents = [Backup]::new("Documents")
@@ -45,35 +44,51 @@ $backup_Drive.add("C:\Users\$env:UserName\Google Drive")
 $backup_Test = [Backup]::new("Test")
 $backup_Test.add("C:\Users\$env:UserName\Documents\PowerShell_Examples")
 
+# add all backup options to list
 $all_Backups += $backup_Documents
 $all_Backups += $backup_Drive
 $all_Backups += $backup_Test
 
+# user selected backup option
 $cur_Backup = $null
 
+# if no arguments are provided
 if ( !$args ) {
     usage
     exit
 }
 
+# list backup options
 if ( $args[0].tolower().equals("list") ) {
     listBackups
+    exit
 }
 
+# select backup option 
 switch ( $args[0].toLower() ) {
 
     "drive" { $cur_Backup = $backup_Drive; break }
     "documents" { $cur_Backup = $backup_Documents; break }
-    "test" { $cur_Test = $backup_Test; break }
+    "test" { $cur_Backup = $backup_Test; break }
 }
 
+# if an invalid backup option was selected
 if ( !$cur_Backup ) {
 
-    echo ""
-    echo "  Invalid backup type"
-    echo ""
+    echo "`n  Invalid backup option`n"
     exit
 }
 
+# name of parent folder that will contain backups
+$baseName = $null
 
+# select parent folder name
+switch ( $args[0].toLower() ) {
 
+    "drive" { $baseName = "Google_Drive" }
+    "documents" { $baseName = $env:ComputerName }
+    "test" { $baseName = "PowerShell_Examples"}
+}
+
+# remove later
+echo "`nThe base name you chose was: ${basename}`n"

@@ -11,8 +11,12 @@ class Backup{
     [void] add([string]$dirToCopy){
         $this.directoriesToCopy += "$dirToCopy"
     }
-    
-    [String] toString(){
+
+    [void] createBackup ([string]$destination){
+        
+    }
+
+    [string] toString(){
         
         $s += $this.backupName
         $s += "`n"

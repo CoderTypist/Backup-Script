@@ -38,6 +38,16 @@ function doColumnsHidden ([int]$numCols) {
     else { dir -Force | Format-Wide -Column $numCols }
 }
 
+function testFileExists ([string]$fileName) {
+    if ( !$fileName ) { $false }
+    else { Test-Path "$fileName" -PathType leaf }
+}
+
+function testDirectoryExists ([string]$dirName) {
+    if ( !$dirName ) { $false }
+    else { Test-Path "$dirName" -PathType container }
+}
+
 # ALIASES navigation
 Set-Alias home goToHome
 Set-Alias docs goToDocs 
@@ -66,6 +76,9 @@ Set-Alias fldira doFormatListHidden
 Set-Alias cl doColumns
 Set-Alias cld doColumnsDirectories
 Set-Alias cla doColumnsHidden
+
+Set-Alias Test-File testFileExists
+Set-Alias Test-Dir testDirectoryExists
 
 Set-Alias zip Compress-Archive
 Set-Alias unzip Expand-Archive
