@@ -1,18 +1,30 @@
 
 class Backup{
 
-    [string]$backupName
+    [string]$backupName # name of backup option
+    [string]$baseName   
     [string[]]$directoriesToCopy
 
-    Backup([string]$backupName){
+    Backup([string]$backupName, [string]$baseName){
         $this.backupName = $backupName
+        $this.baseName = $baseName
     }
 
     [void] add([string]$dirToCopy){
         $this.directoriesToCopy += "$dirToCopy"
     }
 
-    [void] createBackup ([string]$destination){
+    [bool] canBackup(){
+
+        foreach ( $item in $this.directoriesToCopy ) {
+            if( Test-Path $item -PathType container ) {
+                return $true
+            }
+        }
+        return $false
+    }
+
+    [void] createBackup ([string]$dest){
         
     }
 
