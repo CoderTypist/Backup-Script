@@ -2,7 +2,7 @@
 class Backup{
 
     [string]$backupName              # name of backup option
-    [string]$baseName                # backup will be insider a directory with this name
+    [string]$baseName                # backup will be located in the directory with this name
     [string]$dest                    # directory containing the backup will be here
     [int]$numBackups                 # max number of backups to keep
     [string[]]$directoriesToCopy     # directories to copy
