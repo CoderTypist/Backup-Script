@@ -22,36 +22,42 @@ function listBackups {
     exit
 }
 
+#------------------------ ANY MODIFICATIONS GO HERE ------------------------#
+
 # backups will be stored here
 # $dest = "D:\"
 $dest = "C:\Users\Coder Typist\Documents\PowerShell\Backup_Script\Backups"
 
-# maximum number of backups
-$num_Backups = 3
+# default number of backups
+$numBackups = 3
 
 # list of all backup options
 [Backup[]]$all_Backups = @()
 
-# BACKUP Documents
-$backup_Documents = [Backup]::new("Documents", $env:ComputerName)
+# backup options
+$backup_Documents = [Backup]::new("Documents", $env:ComputerName, $dest, $numBackups)
+$backup_Drive = [Backup]::new("Drive", "Google_Drive", $dest, $numBackups)
+$backup_Test = [Backup]::new("Test", "PowerShell_Examples", $dest, $numBackups)
+
+# backup Documents
 $backup_Documents.add("C:\Users\$env:UserName\Documents")
 $backup_Documents.add("C:\Users\$env:UserName\Desktop")
 $backup_Documents.add("C:\Users\$env:UserName\Pictures")
 $backup_Documents.add("C:\Users\$env:UserName\Videos")
 $backup_Documents.add("C:\Users\$env:UserName\Downloads")
 
-# BACKUP Google Drive
-$backup_Drive = [Backup]::new("Drive", "Google_Drive")
+# backup Google Drive
 $backup_Drive.add("C:\Users\$env:UserName\Google Drive")
 
-# BACKUP Testing
-$backup_Test = [Backup]::new("Test", "PowerShell_Examples")
+# backup Testing
 $backup_Test.add("C:\Users\$env:UserName\Documents\PowerShell_Examples")
 
 # add all backup options to list
 $all_Backups += $backup_Documents
 $all_Backups += $backup_Drive
 $all_Backups += $backup_Test
+
+#-------------------- SHOULD NOT MODIFY AFTER THIS POINT -------------------#
 
 # user selected backup option
 $cur_Backup = $null
@@ -73,6 +79,7 @@ foreach ( $item in $all_Backups ) {
 
     if( $args[0].toLower().equals($item.backupName.toLower()) ){
         $cur_Backup = $item
+        break
     }
 }
 
@@ -85,16 +92,6 @@ if ( !$cur_Backup ) {
     exit
 }
 
-# attempt to create the destination folder if it does not exist
-if( !(Test-Path $dest -PathType container ) ) {
-    md $dest -erroraction 'silentlycontinue'
-
-    if ( $false -eq $? ) {
-        echo "`n Unable to create destination folder $dest `n"
-        exit
-    }
-}
-
 # if none of the folders to backup exist
 if ( $false -eq $cur_Backup.canBackup() ) {
 
@@ -104,9 +101,7 @@ if ( $false -eq $cur_Backup.canBackup() ) {
     exit
 }
 
-# destination formatting
-if ( $dest[$dest.length-1] -ne '\' -and $dest[$dest.length-1] -ne '/' ) {
-    $dest += '\'
-}
+# create backup
+$cur_Backup.createBackup()
 
 # $var = get-date -format "_MM_dd_yy_HH_mm"
