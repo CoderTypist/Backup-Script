@@ -53,56 +53,7 @@ class Backup{
         return $false
     }
 
-    # The backup process may take too long and the user may quit the program.
-    # Backups may be several gigabytes and the process may take a while.
-    #
-    # If the "extra" backups were deleted before backing up is done, and the user
-    # quits the program, the old backups would be lost.
-    # To avoid this, backups that are meant to be deleted are temporarily renamed
-    # until the backup process is completed. 
-    # Once the backup is successfully created, the temporarily renamed backups are deleted.
-    #
-    # If the user quits the program during the backup process, the user will have
-    # to manually go rename the backups. 
-    # Failing to appropriately rename the temporarily renamed backups will result in 
-    # the program not working properly.
-    hidden [void] managePrevious() {
-
-        $prevBackups = ls $this.dest | % { $_.name }
-
-        # temporarily rename backups that will be deleted later
-        if ( $prevBackups.length -ge $this.numBackups ) {
-
-            # number of backups to be renamed to temp_##
-            $numTemps = $prevBackups.length - ( $this.numBackups - 1 )
-
-            # renames backups (that will be deleted later) to temp_##
-            for ( $i = 0; $i -lt $numTemps; $i++ ) {
-                $tempName = "temp_"
-                $tempName += $this.numify($i+1)
-                mv "$($this.dest)$($prevBackups[$i])" "$($this.dest)$tempName"
-            }
-
-            # renumbers the remaining backups
-            $newNum = 1
-
-            for ( $i = $numTemps; $i -lt $prevBackups.length; $i++) {
-                
-                # Write-Host "$($this.dest)$($this.numify($newNum))$($prevBackups[$i].substring(2))"
-                mv "$($this.dest)$($prevBackups[$i])" "$($this.dest)$($this.numify($newNum))$($prevBackups[$i].substring(2))"
-                $newNum++
-            }
-
-        }
-
-        $result = ls $this.dest | % { $_.name }
-        # You need to use a for loop
-        foreach ( $item in $result ){
-            Write-Host $item
-        }
-    }
-
-    hidden [void] removeTemps() {
+    hidden [void] recovery() {
 
     }
 
