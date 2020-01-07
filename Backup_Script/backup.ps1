@@ -32,7 +32,8 @@ $dest = "C:\Users\Coder Typist\Documents\PowerShell\Backup_Script\Backups"
 $numBackups = 3
 
 # list of all backup options
-[Backup[]]$all_Backups = @()
+# [Backup[]]$all_Backups = @()
+$all_Backups = @()
 
 # backup options
 $backup_Documents = [Backup]::new("Documents", $env:ComputerName, $dest, $numBackups)
