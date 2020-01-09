@@ -5,7 +5,7 @@ class Backup{
     [string]$baseName                # backup will be located in the directory with this name
     [string]$dest                    # directory containing the backup will be here
     [int]$numBackups                 # max number of backups to keep
-    [string[]]$directoriesToCopy     # directories to copy
+    [string[]]$itemsToCopy           # items to copy
 
     Backup([string]$backupName, [string]$baseName, [string]$dest, [int]$numBackups) {
 
@@ -40,24 +40,25 @@ class Backup{
     }
 
     [void] add([string]$dirToCopy){
-        $this.directoriesToCopy += "$dirToCopy"
+        $this.itemsToCopy += "$dirToCopy"
     }
 
+    # returns true if all of the items in $itemsToCopy exist
     [bool] canBackup() {
 
-        foreach ( $item in $this.directoriesToCopy ) {
-            if( Test-Path $item -PathType container ) {
-                return $true
+        foreach ( $item in $this.itemsToCopy ) {
+
+            if( !(Test-Path $item) ) {
+                return $false
             }
         }
-        return $false
-    }
-
-    hidden [void] recovery() {
-
+        return $true
     }
 
     [void] createBackup() {
+
+        Write-Host "`n  Beginning backup..."
+        Write-Host "  $($this.backupName)`n"
 
         # attempt to create the destination folder if it does not exist
         if( !(Test-Path $this.dest -PathType container ) ) {
@@ -69,15 +70,77 @@ class Backup{
             }
         }
 
-        $this.managePrevious()
+        # recovery from failed backup attempt
+        if ( Test-Path "$($this.dest)temp" -PathType container ) {
+            rm "$($this.dest)temp" -recurse
+        }
+
+        # list of previous backups
+        [string[]]$savedBackups = ls $this.dest | % { $_.name }
+
+        # create the new backup
+        md "$($this.dest)temp"
+
+        $numItem = 1
+        foreach ( $item in $this.itemsToCopy ) {
+
+            Write-Host "  $($numItem)/$($this.itemsToCopy.length): $item"
+            # Wait for compression to finish before resuming the script.
+            # Otherwise, the script will continue while the files are being zipped
+            # Start-Job -name "ZipItem" -scriptblock { Compress-Archive $item "$($this.dest)temp\$($this.getName($item))" }
+            # Wait-Job -name "ZipItem"
+            $numItem++
+        }
+
+        # if there are more backups than the max specified by numBackups
+        $newNum = 1
+        if ( $savedBackups.length -ge $this.numBackups ) {
+
+            # delete the old backups
+            for ( $i = 0; $i -le $savedBackups.length - $this.numBackups; $i++ ) {
+
+                rm "$($this.dest)$($savedBackups[$i])" -recurse
+            }
+
+            # rename backups
+            for ( $i = ( $savedBackups.length - $this.numBackups + 1 ); $i -lt $savedBackups.length; $i++) {
+
+                mv "$($this.dest)$($savedBackups[$i])" "$($this.dest)$($this.numify($newNum))$($savedBackups[$i].substring(2))" 
+                $newNum++
+            }
+        }
+
+        else {
+            $newNum = $savedBackups.length+1
+        }
+
+        # rename newly made backup
+        $date = get-date -format "_MM_dd_yy_HH_mm"
+        mv "$($this.dest)temp" "$($this.dest)$($this.numify($newNum))_$($this.baseName)$date"
+
+        Write-Host "`n  Backup complete`n"
+    }
+
+    # extracts the file/directory name from the filepath
+    hidden [string] getName([string]$path) {
+        
+        $path = $path.replace('/','\')
+        $index = $path.lastIndexOf('\')
+
+        if ( $index -eq -1 ) {
+            return $path
+        }
+
+        if ( $index -eq $path.length-1 ){
+            $path = $path.substring(0, $path.length-1)
+        }
+
+        return $path.substring($path.lastIndexOf('\')+1)
     }
 
     # ensures that a string representation of number with a length of 2 is returned
     # if $num == 2, numify will return "02"
-    # if $num == 21, numify will return "21"
     # numBackups must be > 0 and < 100 (the constructor ensures this)
-    # therefore, $num can be in the inclusive range of 1-99
-    # therefore, [string]$num will always have a length <= 2
     hidden [string] numify([int]$num) {
 
         if ( $num -gt 9 ) {
@@ -100,8 +163,8 @@ class Backup{
 
         $s += "`n"
 
-        foreach ($directory in $this.directoriesToCopy) {
-            $s += "${directory}`n"
+        foreach ($item in $this.itemsToCopy) {
+            $s += "${item}`n"
         }
 
         return $s

@@ -38,7 +38,7 @@ $all_Backups = @()
 # backup options
 $backup_Documents = [Backup]::new("Documents", $env:ComputerName, $dest, $numBackups)
 $backup_Drive = [Backup]::new("Drive", "Google_Drive", $dest, $numBackups)
-$backup_Test = [Backup]::new("Test", "PowerShell_Examples", $dest, $numBackups)
+$backup_Test = [Backup]::new("Test", "Test_Files", $dest, $numBackups)
 
 # backup Documents
 $backup_Documents.add("C:\Users\$env:UserName\Documents")
@@ -51,7 +51,8 @@ $backup_Documents.add("C:\Users\$env:UserName\Downloads")
 $backup_Drive.add("C:\Users\$env:UserName\Google Drive")
 
 # backup Testing
-$backup_Test.add("C:\Users\$env:UserName\Documents\PowerShell_Examples")
+$backup_Test.add("C:\Users\$env:UserName\Documents\A_folder")
+$backup_Test.add("C:\Users\$env:UserName\Documents\B_folder")
 
 # add all backup options to list
 $all_Backups += $backup_Documents
@@ -104,5 +105,3 @@ if ( $false -eq $cur_Backup.canBackup() ) {
 
 # create backup
 $cur_Backup.createBackup()
-
-# $var = get-date -format "_MM_dd_yy_HH_mm"
