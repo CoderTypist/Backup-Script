@@ -1,3 +1,4 @@
+
 # ALIASES navigation
 $docs = "C:\Users\$env:UserName\Documents"
 $drive = "C:\Users\$env:UserName\Google Drive"
@@ -48,6 +49,23 @@ function testDirectoryExists ([string]$dirName) {
     else { Test-Path "$dirName" -PathType container }
 }
 
+function getNameFromPath([string]$path) {
+    
+    if ( !$path ) { return }
+
+    $path = $path.replace('/','\')
+    $index = $path.lastIndexOf('\')
+
+	if ( $index -eq -1 ) { $path }
+
+	elseif ( $index -eq $path.length-1 ) { 
+        $path = $path.substring(0, $path.length-1)
+        $path.substring($path.lastIndexOf('\')+1) 
+    }
+
+    else { $path.substring($path.lastIndexOf('\')+1) }
+}
+
 # ALIASES navigation
 Set-Alias home goToHome
 Set-Alias docs goToDocs 
@@ -78,7 +96,13 @@ Set-Alias cld doColumnsDirectories
 Set-Alias cla doColumnsHidden
 
 Set-Alias Test-File testFileExists
+Set-Alias tfile testFileExists
+
 Set-Alias Test-Dir testDirectoryExists
+Set-Alias tdir testDirectoryExists
+
+Set-Alias Get-Name getNameFromPath
+Set-Alias gname getNameFromPath
 
 Set-Alias zip Compress-Archive
 Set-Alias unzip Expand-Archive
