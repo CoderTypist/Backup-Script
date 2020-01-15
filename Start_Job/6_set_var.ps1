@@ -6,7 +6,7 @@
 # Any variables available in the current scope will be passed on to Start-Job
 # Any changes to automatic variables will be passed on to Start-Job
 # 
-# Some data type conversions that are unable to take place
+# Some data type conversions are unable to take place
 # I skip over these manually with a switch
 
 $gvar = @{}

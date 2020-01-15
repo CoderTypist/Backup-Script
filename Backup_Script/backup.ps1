@@ -1,4 +1,10 @@
 
+# author: Christian Bargraser
+# https://github.com/CoderTypist
+
+# This script is intended to be stored on the external storage device being used
+# By doing this, you can easily create backups of different devices
+
 # imports
 . .\class_Backup.ps1
 
@@ -9,7 +15,7 @@ function usage {
     echo ".\backup <backup_option>`n"
 
     echo "`nLists backup options"
-    echo ".\backup list`n"
+    echo ".\backup options`n"
 }
 
 # lists all backup options
@@ -24,9 +30,12 @@ function listBackups {
 
 #------------------------ ANY MODIFICATIONS GO HERE ------------------------#
 
+echo "Documents_${env:ComputerName}_${env:UserName}"
+echo "Google_Drive_${env:ComputerName}_${env:UserName}"
+
 # backups will be stored here
-# $dest = "D:\"
-$dest = "C:\Users\Coder Typist\Documents\PowerShell\Backup_Script\Backups"
+$dest = "D:\Backups\"
+# $dest = "C:\Users\Coder Typist\Documents\PowerShell\Backup_Script\Backups"
 
 # default number of backups
 $numBackups = 3
@@ -35,8 +44,14 @@ $numBackups = 3
 # [Backup[]]$all_Backups = @()
 $all_Backups = @()
 
+# [Backup]::new(<1>, <2>, <3>, <4>)
+# 1 - Backup option name
+# 2 - Create backup in a directory with this name
+# 3 - Create the directory containing the backup (<2>) in this directory (<3>)
+# 4 - Maximum number of backups to keep
+
 # backup options
-$backup_Documents = [Backup]::new("Documents", $env:ComputerName, $dest, $numBackups)
+$backup_Documents = [Backup]::new("Documents", "Documents_${env:ComputerName}_${env:UserName}", $dest, $numBackups)
 $backup_Drive = [Backup]::new("Drive", "Google_Drive", $dest, $numBackups)
 $backup_Test = [Backup]::new("Test", "Test_Files", $dest, $numBackups)
 
@@ -53,6 +68,7 @@ $backup_Drive.add("C:\Users\$env:UserName\Google Drive")
 # backup Testing
 $backup_Test.add("C:\Users\$env:UserName\Documents\A_folder")
 $backup_Test.add("C:\Users\$env:UserName\Documents\B_folder")
+$backup_Test.add("C:\Users\$env:UserName\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1")
 
 # add all backup options to list
 $all_Backups += $backup_Documents
@@ -71,7 +87,7 @@ if ( !$args ) {
 }
 
 # list backup options
-if ( $args[0].tolower().equals("list") ) {
+if ( $args[0].tolower().equals("options") ) {
     listBackups
     exit
 }

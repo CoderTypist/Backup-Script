@@ -1,4 +1,7 @@
 
+# author: Christian Bargraser
+# https://github.com/CoderTypist
+
 class Backup{
 
     [string]$backupName              # name of backup option
@@ -85,10 +88,66 @@ class Backup{
         foreach ( $item in $this.itemsToCopy ) {
 
             Write-Host "  $($numItem)/$($this.itemsToCopy.length): $item"
+            
+            # data to pass on to Start-Job
+            $argHash = @{ item = $item; dest = $($this.dest); maxSize = $($this.maxItemSize) }
+
             # Wait for compression to finish before resuming the script.
-            # Otherwise, the script will continue while the files are being zipped
-            # Start-Job -name "ZipItem" -scriptblock { Compress-Archive $item "$($this.dest)temp\$($this.getName($item))" }
-            # Wait-Job -name "ZipItem"
+            # Otherwise, the script will continue while the files are being zipped.
+            Start-Job -name "ZipItem" -scriptblock {
+
+                # extracts the file/directory name from the filepath
+                function getName([string]$path) {
+                    
+                    if ( !$path ) { return $null }
+
+                    $path = $path.replace('/','\')
+                    $index = $path.lastIndexOf('\')
+
+                    if ( $index -eq -1 ) { $path }
+
+                    elseif ( $index -eq $path.length-1 ) { 
+                        $path = $path.substring(0, $path.length-1)
+                        $path.substring($path.lastIndexOf('\')+1) 
+                    }
+
+                    else { $path.substring($path.lastIndexOf('\')+1) }
+                }
+
+                $hash = $args[0]
+
+                $loc = $hash["dest"]
+                $loc += "temp\"
+                $zip = $loc
+                $zip += getName($hash["item"])
+
+                # if the item is a directory
+                if ( Test-Path $hash["item"] -PathType container ) {
+
+                    $contents = dir $hash["item"] | % { $_.FullName }
+
+                    # if the directory is empty
+                    if ( !$contents ) {
+                        $dirName = getName($hash["item"])
+                        md "$loc\$dirName"
+                    }
+
+                    # directory is not empty
+                    else {
+                        Compress-Archive $contents $zip
+                    }
+                }
+
+                # if the item is not a directory
+                else {
+                    $zip += ".zip"
+                    Compress-Archive $hash["item"] $zip
+                }
+
+            } -ArgumentList $argHash > $null
+
+            Wait-Job -name "ZipItem" > $null
+            Receive-Job -name "ZipItem"
             $numItem++
         }
 
@@ -119,23 +178,6 @@ class Backup{
         mv "$($this.dest)temp" "$($this.dest)$($this.numify($newNum))_$($this.baseName)$date"
 
         Write-Host "`n  Backup complete`n"
-    }
-
-    # extracts the file/directory name from the filepath
-    hidden [string] getName([string]$path) {
-        
-        $path = $path.replace('/','\')
-        $index = $path.lastIndexOf('\')
-
-        if ( $index -eq -1 ) {
-            return $path
-        }
-
-        if ( $index -eq $path.length-1 ){
-            $path = $path.substring(0, $path.length-1)
-        }
-
-        return $path.substring($path.lastIndexOf('\')+1)
     }
 
     # ensures that a string representation of number with a length of 2 is returned
