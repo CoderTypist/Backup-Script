@@ -28,7 +28,4 @@ I bought an external SSD, so I wrote a script that would automate the process of
 As I was working on my backup script, I ran into the need to use Start-Job.
 
 
-I quickly realized that passing data to Start-Job is inconvenient.
-
-
-I set out to create a series of functions that would allow me to pass data to Start-Job in an easier way.
+I explored several different ways to pass data to Start-Job.
