@@ -90,7 +90,7 @@ class Backup{
             Write-Host "  $($numItem)/$($this.itemsToCopy.length): $item"
             
             # data to pass on to Start-Job
-            $argHash = @{ item = $item; dest = $($this.dest); maxSize = $($this.maxItemSize) }
+            $argHash = @{ item = $item; dest = $($this.dest) }
 
             # Wait for compression to finish before resuming the script.
             # Otherwise, the script will continue while the files are being zipped.
