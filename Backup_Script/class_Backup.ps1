@@ -87,11 +87,12 @@ class Backup{
         $numItem = 1
         foreach ( $item in $this.itemsToCopy ) {
 
-            Write-Host "  $($numItem)/$($this.itemsToCopy.length): $item"
+            Write-Host "  $($numItem)/$($this.itemsToCopy.length): $item" -NoNewLine
             
             # data to pass on to Start-Job
             $argHash = @{ item = $item; dest = $($this.dest) }
 
+            $zip_timer = [system.diagnostics.stopwatch]::StartNew()
             # Wait for compression to finish before resuming the script.
             # Otherwise, the script will continue while the files are being zipped.
             Start-Job -name "ZipItem" -scriptblock {
@@ -145,9 +146,12 @@ class Backup{
                 }
 
             } -ArgumentList $argHash > $null
-
             Wait-Job -name "ZipItem" > $null
             Receive-Job -name "ZipItem"
+
+            $zip_timer.stop()
+            Write-Host " - $($zip_timer.elapsed.toString())"
+            
             $numItem++
         }
 

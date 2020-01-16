@@ -120,4 +120,6 @@ if ( $false -eq $cur_Backup.canBackup() ) {
 }
 
 # create backup
+$timer = [system.diagnostics.stopwatch]::StartNew()
 $cur_Backup.createBackup()
+Write-Host "  Backup took: $($timer.elapsed.toString())`n"
