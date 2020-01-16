@@ -14,8 +14,11 @@ function usage {
     echo "`nCreates backup"
     echo ".\backup <backup_option>`n"
 
-    echo "`nLists backup options"
+    echo "Lists backup options"
     echo ".\backup options`n"
+
+    echo "Expands a backup"
+    echo ".\backup expand <path_of_backup> <place_expanded_backup_in_this_directory>`n"
 }
 
 # lists all backup options
@@ -29,9 +32,6 @@ function listBackups {
 }
 
 #------------------------ ANY MODIFICATIONS GO HERE ------------------------#
-
-echo "Documents_${env:ComputerName}_${env:UserName}"
-echo "Google_Drive_${env:ComputerName}_${env:UserName}"
 
 # backups will be stored here
 $dest = "D:\Backups\"
@@ -69,6 +69,7 @@ $backup_Drive.add("C:\Users\$env:UserName\Google Drive")
 $backup_Test.add("C:\Users\$env:UserName\Documents\A_folder")
 $backup_Test.add("C:\Users\$env:UserName\Documents\B_folder")
 $backup_Test.add("C:\Users\$env:UserName\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1")
+$backup_Test.add("C:\Users\$env:UserName\Documents\temp.zip")
 
 # add all backup options to list
 $all_Backups += $backup_Documents
@@ -87,8 +88,14 @@ if ( !$args ) {
 }
 
 # list backup options
-if ( $args[0].tolower().equals("options") ) {
+if ( $args[0].toLower().equals("options") ) {
     listBackups
+    exit
+}
+
+# expand a pre-existing backup
+if ( $args[0].toLower().equals("expand") ) {
+    expand $args[1] $args[2]
     exit
 }
 
