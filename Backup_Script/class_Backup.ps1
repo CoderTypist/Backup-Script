@@ -141,8 +141,18 @@ class Backup{
 
                 # if the item is not a directory
                 else {
-                    $zip += ".zip"
-                    Compress-Archive $hash["item"] $zip
+
+                    # If the item is a zip file
+                    # Avoid putting a zip folder inside of a zip folder
+                    if ( $hash["item"] -match "^*\.zip$" ) {
+                        cp $hash["item"] $loc
+                    }
+
+                    # if the item is not a zip file
+                    else {
+                        $zip += ".zip"
+                        Compress-Archive $hash["item"] $zip
+                    }
                 }
 
             } -ArgumentList $argHash > $null
@@ -151,7 +161,7 @@ class Backup{
 
             $zip_timer.stop()
             Write-Host " - $($zip_timer.elapsed.toString())"
-            
+
             $numItem++
         }
 
