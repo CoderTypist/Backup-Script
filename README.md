@@ -1,31 +1,77 @@
-# PowerShell
+# Backup Script
 
 
-These are various personal projects that were born from my desire to learn PowerShell.
+### Set up
 
 
-Each subfolder will contain a more detailed explanation of what each project is.
+Make sure that backup.ps1 and class_Backup.ps1 are in the same directory.
 
 
-### Personal Aliases
+Ideally, you would place the files on your external storage device. 
 
 
-I first began by creating a series of aliases and functions to let me use the terminal how I wanted.
+### Usage
 
 
-These aliases and functions are in Microsoft.PowerShell_profile.ps1
+List all backup options
 
 
-### Backup Script
+`.\backup options`
 
 
-I bought an external SSD, so I wrote a script that would automate the process of backuping up files.
+Create a backup
 
 
-### Start-Job
+`.\backup <option>`
 
 
-As I was working on my backup script, I ran into the need to use Start-Job.
+### backup.ps1
 
 
-I explored several different ways to pass data to Start-Job.
+Contains two default backup options.
+
+
+Any custom backup options would be placed in this file.
+
+
+### class_Backup.ps1
+
+
+This file contains functions and class definitions.
+
+
+This file should not be modified.
+
+
+# Creating a new backup option
+
+
+New backup options will be added in backup.ps1
+
+
+All backup options must be added to $all_Backups
+
+
+`[Backup]::new( <1>, <2>, <3>, <4> )`
+
+
+    1 - Backup option name
+
+
+    2 - Create backup in a zip file with this name (do not include .zip)
+
+
+    3 - Create the zip file containing the backup (<2>) in this directory (<3>)
+
+
+    4 - Maximum number of backups to keep
+
+
+Example:
+
+
+```
+$backup_Docs = [Backup]::new( "Docs", "Documents_$env:ComputerName", "D:\Backups", 4 )
+$backup_Docs.add("C:\Users\$env:UserName\Documents") 
+$all_Backups += $backup_Docs
+```
