@@ -25,7 +25,7 @@ Create a backup
 `.\backup <option>`
 
 
-# Default backup location
+### Default backup location
 
 
 Default backup location is D:\Backups\
