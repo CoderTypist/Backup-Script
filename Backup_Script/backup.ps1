@@ -64,7 +64,6 @@ $backup_Drive.add("C:\Users\$env:UserName\Google Drive")
 # add all backup options to list
 $all_Backups += $backup_Documents
 $all_Backups += $backup_Drive
-$all_Backups += $backup_Test
 
 #-------------------- SHOULD NOT MODIFY AFTER THIS POINT -------------------#
 

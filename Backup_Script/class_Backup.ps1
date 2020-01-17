@@ -120,7 +120,7 @@ class Backup{
                 $remove += $item
             }
         }
-        # Write-Host "Will remove: $remove"
+        
         foreach ( $item in $remove ) { $this.itemsToCopy.remove($item) }
 
         # list of previous backups
@@ -131,45 +131,39 @@ class Backup{
 
         Start-Job -name "Zip" -ScriptBlock {
 
-            # Write-Host "Inside of Start-Job"
             $hash = $args[0]
             $items = $args[1]
-            # Write-Host "Items to copy: $items"
             Compress-Archive  $items $hash["zip_dest"]
 
-        } -ArgumentList $argHash, $this.itemsToCopy # > $null
+        } -ArgumentList $argHash, $this.itemsToCopy
 
-        Wait-Job -name "Zip" # > $null
+        Wait-Job -name "Zip"s
         Receive-Job -name "Zip"
 
-        # Write-Host "FLAG 1"
         # if there are more backups than the max specified by numBackups
         $newNum = 1
         if ( $savedBackups.length -ge $this.numBackups ) {
-            # Write-Host "FLAG 2"
+
             # delete the old backups
             for ( $i = 0; $i -le $savedBackups.length - $this.numBackups; $i++ ) {
-                # Write-Host "FLAG 3"
+               
                 rm "$($this.dest)$($savedBackups[$i])" -recurse
             }
 
             # rename backups
             for ( $i = ( $savedBackups.length - $this.numBackups + 1 ); $i -lt $savedBackups.length; $i++) {
-                # Write-Host "FLAG 4"
+                
                 mv "$($this.dest)$($savedBackups[$i])" "$($this.dest)$($this.numify($newNum))$($savedBackups[$i].substring(2))" 
                 $newNum++
             }
         }
 
         else {
-            # Write-Host "FLAG 5"
             $newNum = $savedBackups.length+1
         }
-
-        # Write-Host "FLAG 6"        
+       
         # rename newly made backup
         $date = get-date -format "_MM_dd_yy_HH_mm"
-        #Write-Host "FLAG 7"
         mv "$($this.dest)temp.zip" "$($this.dest)$($this.numify($newNum))_$($this.baseName)${date}.zip"
 
         Write-Host "  Backup complete`n"
