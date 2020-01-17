@@ -43,7 +43,7 @@ This file contains functions and class definitions.
 This file should not be modified.
 
 
-# Creating a new backup option
+### Creating a new backup option
 
 
 New backup options will be added in backup.ps1
