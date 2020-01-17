@@ -16,9 +16,6 @@ function usage {
 
     echo "Lists backup options"
     echo ".\backup options`n"
-
-    echo "Expands a backup"
-    echo ".\backup expand <path_of_backup> <place_expanded_backup_in_this_directory>`n"
 }
 
 # lists all backup options
@@ -46,14 +43,13 @@ $all_Backups = @()
 
 # [Backup]::new(<1>, <2>, <3>, <4>)
 # 1 - Backup option name
-# 2 - Create backup in a directory with this name
-# 3 - Create the directory containing the backup (<2>) in this directory (<3>)
+# 2 - Create backup in a zip file with this name (do not include .zip)
+# 3 - Create the zip file containing the backup (<2>) in this directory (<3>)
 # 4 - Maximum number of backups to keep
 
 # backup options
 $backup_Documents = [Backup]::new("Documents", "Documents_${env:ComputerName}_${env:UserName}", $dest, $numBackups)
 $backup_Drive = [Backup]::new("Drive", "Google_Drive", $dest, $numBackups)
-$backup_Test = [Backup]::new("Test", "Test_Files", $dest, $numBackups)
 
 # backup Documents
 $backup_Documents.add("C:\Users\$env:UserName\Documents")
@@ -64,12 +60,6 @@ $backup_Documents.add("C:\Users\$env:UserName\Downloads")
 
 # backup Google Drive
 $backup_Drive.add("C:\Users\$env:UserName\Google Drive")
-
-# backup Testing
-$backup_Test.add("C:\Users\$env:UserName\Documents\A_folder")
-$backup_Test.add("C:\Users\$env:UserName\Documents\B_folder")
-$backup_Test.add("C:\Users\$env:UserName\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1")
-$backup_Test.add("C:\Users\$env:UserName\Documents\temp.zip")
 
 # add all backup options to list
 $all_Backups += $backup_Documents
@@ -90,12 +80,6 @@ if ( !$args ) {
 # list backup options
 if ( $args[0].toLower().equals("options") ) {
     listBackups
-    exit
-}
-
-# expand a pre-existing backup
-if ( $args[0].toLower().equals("expand") ) {
-    expand $args[1] $args[2]
     exit
 }
 
@@ -120,9 +104,11 @@ if ( !$cur_Backup ) {
 # if none of the folders to backup exist
 if ( $false -eq $cur_Backup.canBackup() ) {
 
-    echo "`n  None of the target directories exist."
-    echo "  No backups were made.`n"
-    $cur_Backup.toString()
+    echo `n"No backups were made"
+    echo "This can happen for several reasons:"
+    echo "- The list of items to backup is empty"
+    echo "- None of the items to backup exist"b 
+    echo "- All of the items to backup were empty directories`n"
     exit
 }
 
