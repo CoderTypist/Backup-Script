@@ -55,16 +55,16 @@ All backup options must be added to $all_Backups
 `[Backup]::new( <1>, <2>, <3>, <4> )`
 
 
-    1 - Backup option name
+1 - Backup option name
 
 
-    2 - Create backup in a zip file with this name (do not include .zip)
+2 - Create backup in a zip file with this name (do not include .zip)
 
 
-    3 - Create the zip file containing the backup (<2>) in this directory (<3>)
+3 - Create the zip file containing the backup (<2>) in this directory (<3>)
 
 
-    4 - Maximum number of backups to keep
+4 - Maximum number of backups to keep
 
 
 Example:
