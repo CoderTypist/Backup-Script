@@ -100,13 +100,13 @@ if ( !$cur_Backup ) {
     exit
 }
 
-# if none of the folders to backup exist
+# if it is not possible to create a backup
 if ( $false -eq $cur_Backup.canBackup() ) {
 
-    echo `n"No backups were made"
+    echo `n"A backup was not made"
     echo "This can happen for several reasons:"
     echo "- The list of items to backup is empty"
-    echo "- None of the items to backup exist"b 
+    echo "- None of the items to backup exist"
     echo "- All of the items to backup were empty directories`n"
     exit
 }

@@ -169,7 +169,7 @@ class Backup{
         Write-Host "  Backup complete`n"
     }
 
-    # returns true if all of the items in $itemsToCopy exist
+    # returns true if creating a backup is possible
     [bool] canBackup() {
 
         foreach ( $item in $this.itemsToCopy ) {
