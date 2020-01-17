@@ -25,6 +25,15 @@ Create a backup
 `.\backup <option>`
 
 
+# Default backup location
+
+
+Default backup location is D:\Backups\
+
+
+This can be changed by modifying $dest in backup.ps1
+
+
 ### backup.ps1
 
 
